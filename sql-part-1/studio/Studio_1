@@ -1,0 +1,66 @@
+SELECT * FROM dbo.books
+--Question 1
+select top 100 book_id, authors, title, average_rating as 'rating' 
+from dbo.books 
+ORDER BY average_rating DESC
+--Most popular book is The Complete Calvin and Hobbes
+
+--Question 2
+select top 1 title
+as 'rating'
+FROM dbo.books
+ORDER BY average_rating ASC
+--least popular book is One Night @ The Call Center
+
+--Question 3
+select top 1 tag_id, "count" 
+from booksdb.dbo.book_tags
+order by "count" DESC
+--most popular tag id is 30574
+
+--Question 4
+SELECT tag_id, tag_name
+FROM BooksDB.dbo.tags
+WHERE tag_id LIKE 30574;
+--Most popular tag name is to-read
+
+--Question 5
+SELECT COUNT(*)
+FROM BooksDB.dbo.books
+WHERE original_publication_year >=2000 
+    OR original_publication_year <=2010;
+--9,979 books were published between 2000 and 2010
+
+--Question 6
+SELECT COUNT(title)
+from BooksDB.dbo.books
+WHERE title LIKE '%happy%'
+--13 books titles contain the word "happy"
+
+--Question 7
+SELECT authors, title, average_rating as 'rating'
+FROM BooksDB.dbo.books
+WHERE authors IN('Bill Watterson', 'Brandon Sanderson', 'J.K. Rowling')
+ORDER BY authors ASC, rating DESC
+--The sorting order matters! Sorting this way allows me to see ratings grouped by author. Sorting ratings first would group ratings by author name.
+
+--Question 8
+SELECT COUNT(authors)
+from BooksDB.dbo.books
+where authors BETWEEN 'rock' and 'roll'
+--25 names
+
+--PART 2
+--My Question 1: Which author has written the most books?
+USE BooksDB
+SELECT top 1 authors, COUNT(title) as number_of_books
+from books
+GROUP BY authors
+order by number_of_books DESC
+--Stephen King wrote the most books (60)
+
+--My Question 2: How many books have a 5 star rating?
+SELECT COUNT(distinct book_id) AS five_star_ratings
+from ratings
+WHERE rating = 5
+--There are 9,999 books with 5 star ratings
