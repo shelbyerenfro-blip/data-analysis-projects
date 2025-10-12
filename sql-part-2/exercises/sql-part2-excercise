@@ -1,0 +1,36 @@
+--String Functions
+--Question 1
+SELECT RIGHT(Base_Name, 3)
+FROM RideShareDB.dbo.other_FHV_services_jan_aug_2015
+--Versions of Inc, LLC, and Corp are common at the end of business names
+
+--Question 2
+SELECT CHARINDEX(' ', number_of_trips) AS location_of_spaces
+FROM RideShareDB.dbo.other_FHV_services_jan_aug_2015
+--I didn't see a column for 'number of pickups'...
+
+--Date Functions
+--Question 1
+SELECT DATENAME(MONTH, pick_up_date) AS pick_up_month
+FROM RideShareDB.dbo.other_FHV_services_jan_aug_2015
+ORDER BY pick_up_month DESC
+--This query puts the months in alphabetical order. I was expecting chronological order.
+
+--Question 2
+SELECT DAY(pick_up_date) as pickup_day, DATENAME(MONTH, Pick_Up_Date) AS pickup_month
+FROM RideShareDB.dbo.other_FHV_services_jan_aug_2015
+ORDER BY pickup_day ASC
+--This query still orders months alphabetically. If I want pickup_day and pick_up month ordered by date, I would need to change the last line to ORDER BY pick_up_date ASC.
+
+--Aggregate Functions
+--Question 1
+SELECT MAX(start_lat) as most_easterly
+FROM RideShareDB.dbo.lyft
+
+--Question 2
+Select MAX(start_lng) as most_northerly
+FROM RideShareDB.dbo.lyft
+
+--Question 3
+SELECT CONCAT_WS(': ', base_number, base_name) as base_info
+FROM RideShareDB.dbo.other_FHV_services_jan_aug_2015
