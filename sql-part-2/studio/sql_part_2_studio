@@ -1,0 +1,83 @@
+--SQL Part 2 - Studio
+--1. Create a query that returns the longest title in the dataset
+--1A. Create a query that returns the length of the longest title.
+SELECT MAX(LEN(title)) AS title_length
+from BooksDB.dbo.books;
+--Longest book is 186 characters
+
+--1B. Create a query that uses the length you found in step A to find the longest title.
+SELECT title, LEN(title) AS title_length
+FROM BooksDB.dbo.books
+WHERE LEN(title) = '186';
+--Longest book title is Soccernomics....
+
+--2. Use what you learned in question 1. to find the shortest author name
+--2A. Create a query that returns the length of the shortest author
+SELECT MIN(LEN(authors)) as shortest_name
+from BooksDB.dbo.books
+--Shortest book title is 3 characters
+
+--B. Create a query that returns the shortest author's name
+SELECT authors, LEN(authors) as shortest_name
+FROM BooksDB.dbo.books
+WHERE LEN(authors) = '3';
+--The shortest author's name is Avi
+
+--3. How many titles contain the word "The"?
+--3A. Is there a difference between the number of titles that use "The" or "the"?
+SELECT COUNT(title)
+from BooksDB.dbo.books
+WHERE title LIKE '%the%'
+--4,702 titles contain The or the, I didn't see a difference between capitalization
+
+--How many authors' names START with 'Z'?
+SELECT COUNT(authors)
+from BooksDB.dbo.books
+WHERE authors LIKE 'Z%'
+--11 Authors whose first names start with the letter Z
+
+--5. How many books have been identified as printed in a language other than English?
+SELECT COUNT(LEFT(language_code,2))
+from BooksDB.dbo.books
+WHERE LEFT(language_code,2) <> 'en'
+--186 books printed in a language other than English
+
+--6. Retry question 5 using SUBSTRING
+SELECT COUNT(SUBSTRING(language_code,1,2))
+from BooksDB.dbo.books
+WHERE SUBSTRING(language_code,1,2) <>'en'
+--186 books printed in a language other than English
+
+--7. Create a column that returns the title, authors and language codes. Concatenate these elements so that they return in the following way: title by authors in language_code language.
+SELECT title, authors, language_code,
+    CONCAT(title, ' by ', authors, ' in ',language_code, ' language.')
+        AS 'Summary'
+FROM BooksDB.dbo.books
+
+--7A. Check each selected column to see where any values are NULL. Did any of the columns contain NULL values? 
+SELECT title, authors, language_code
+FROM BooksDB.dbo.books
+    WHERE title IS NULL
+    OR authors IS NULL
+    OR language_code IS NULL;
+--Language_code had NULL values, title and authors did not
+
+--8. Update the query in question 7 using COALESCE to change the language code values from NULL to 'unknown'.
+SELECT title+ ' by '+ authors+' in '+ COALESCE(language_code, 'unknown')+' language.'
+    AS 'Summary'
+from BooksDB.dbo.books
+
+--8A. Has this changed the language code where the values are NULL?
+SELECT title+ ' by '+ authors+' in '+ COALESCE(language_code, 'unknown')+' language.'
+    AS 'Summary'
+from BooksDB.dbo.books
+WHERE language_code IS NULL
+--Language code shows as "unknown" rather than a blank space.
+
+--9. Revisit question 7 using ISNULL instead of COALESCE
+SELECT title+' by '+authors+' in '+ISNULL(language_code, 'unknown')+' language.'
+    AS 'Summary'
+from BooksDB.dbo.books
+--9A. No change in null language_code values from question 8
+
+
