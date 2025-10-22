@@ -1,0 +1,39 @@
+--1. 
+SELECT COUNT([user_id]) as "Users with above average rating" FROM BooksDB.dbo.ratings
+WHERE rating > (Select MAX(average_rating) FROM BooksDB.dbo.books);
+
+--2. 
+-- bookIDs with > 1000 1 star ratings, or over 1000 5 star ratings
+SELECT book_id
+FROM booksdb.dbo.books 
+where ratings_1 > 1000 
+UNION
+SELECT book_id
+FROM booksdb.dbo.books
+WHERE ratings_5 > 1000
+
+--3. 
+-- bookIDs with >1000 1 star ratings AND > 1000 5 star ratings
+SELECT book_id
+FROM booksdb.dbo.books 
+where ratings_1 > 1000 
+INTERSECT
+SELECT book_id
+FROM booksdb.dbo.books
+WHERE ratings_5 > 1000
+
+--4. 
+SELECT book_id, language_code FROM BooksDB.dbo.books
+WHERE language_code = 'en-US'
+EXCEPT 
+SELECT book_id, language_code FROM BooksDB.dbo.books
+WHERE language_code = 'en-GB';
+
+--5.
+SELECT * FROM BooksDB.dbo.tags
+WHERE tag_id IN (
+    select tag_id 
+    FROM BooksDB.dbo.book_tags
+    WHERE [count] > 100000)
+
+
