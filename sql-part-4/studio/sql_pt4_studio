@@ -1,0 +1,76 @@
+-- SQL PART 4 STUDIO --
+
+-- 1. WILLOW
+SELECT b.title
+FROM BooksDB.dbo.books as b
+WHERE authors IN (
+    select b.authors
+    FROM BooksDB.dbo.books as b
+    WHERE authors LIKE '%,%'
+);
+
+--2. IRA
+-- tag = mediation
+-- tags table, book_tags table, books table
+
+SELECT b.title
+FROM BooksDB.dbo.books AS b
+WHERE b.book_id IN (
+    select bt.goodreads_book_id
+    FROM BooksDB.dbo.book_tags as bt
+    WHERE bt.tag_id IN (
+        select t.tag_id
+        FROM BooksDB.dbo.tags as t
+        WHERE t.tag_name LIKE 'Meditation'
+    )
+);
+
+-- 3. ALYCE
+-- books avg rating >= 4.2
+-- only books where title = original title
+
+SELECT b.title, b.original_title, b.average_rating
+FROM BooksDB.dbo.books as b
+WHERE b.title = b.original_title
+INTERSECT
+SELECT b.title, b.original_title, b.average_rating
+FROM BooksDB.dbo.books as b
+WHERE b.average_rating >= '4.2'
+ORDER BY average_rating DESC;
+
+-- 4. THISBE
+-- titles with user avg_rating > book title avg_rating
+-- order by publication time
+-- PART A. (This question was poorly worded. I interpreted it as:
+-- write a query that shows publication time and titles for titles
+-- that have higher average user/reader ratings than 
+-- actual average ratings. That made more sense to me with the posed
+-- scenario than what was written for this question.)
+
+WITH above_avg_books AS (
+SELECT book_id
+    FROM BooksDB.dbo.ratings
+    WHERE rating > (
+        Select MAX(average_rating) 
+        FROM BooksDB.dbo.books)
+    GROUP BY book_id
+)
+SELECT original_publication_year, title
+FROM BooksDB.dbo.books
+WHERE book_id IN (
+    select book_id FROM above_avg_books);
+
+-- PART B.
+WITH above_avg_books AS (
+SELECT book_id
+    FROM BooksDB.dbo.ratings
+    WHERE rating > (
+        Select MAX(average_rating) 
+        FROM BooksDB.dbo.books)
+    GROUP BY book_id
+)
+SELECT original_publication_year, title
+FROM BooksDB.dbo.books
+WHERE book_id IN (
+    select book_id FROM above_avg_books)
+ORDER BY original_publication_year, title;
